@@ -1,0 +1,15 @@
+{
+  "name": "cosmo-home",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cosmo Home MERN application foundation.",
+  "scripts": {
+    "client:dev": "npm run dev --prefix client",
+    "server:dev": "npm run dev --prefix server",
+    "client:install": "npm install --prefix client",
+    "server:install": "npm install --prefix server"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

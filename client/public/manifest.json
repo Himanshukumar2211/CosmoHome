@@ -1,0 +1,8 @@
+{
+  "name": "Cosmo Home",
+  "short_name": "Cosmo Home",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff"
+}
