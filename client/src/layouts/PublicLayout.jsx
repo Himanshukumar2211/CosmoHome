@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import WhatsAppButton from '../components/public/WhatsAppButton.jsx';
+import Icon from "../assets/branding/icon.svg";
 
 export default function PublicLayout() {
   const location = useLocation();
@@ -17,8 +18,12 @@ export default function PublicLayout() {
     <div className="min-h-screen text-[#352633]">
       <header className="sticky top-0 z-40 border-b border-white/70 bg-white/80 backdrop-blur-xl">
         <nav className="section-shell flex min-h-20 items-center justify-between gap-5">
-          <NavLink to="/" className="flex items-center gap-3" aria-label="Cosmo Home">
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-[#7d3c58] text-lg font-black text-white">CH</span>
+          <NavLink to="/" className="flex items-center gap-0" aria-label="Cosmo Home">
+            <img
+                src={Icon}
+                alt="Cosmo Home"
+                className="h-12 w-13 object-contain"
+            />
             <span>
               <span className="block text-lg font-black leading-none">Cosmo Home</span>
               <span className="block text-xs font-semibold text-[#846071]">Salon at your doorstep</span>
