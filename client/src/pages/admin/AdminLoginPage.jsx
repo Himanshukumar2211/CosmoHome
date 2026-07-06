@@ -6,6 +6,7 @@ import { ADMIN_ROUTES } from '../../constants/routes.constants.js';
 import { useAuth } from '../../hooks/useAuth.js';
 import { loginAdmin } from '../../services/auth.api.js';
 import { unwrapApiData } from '../../utils/apiData.js';
+import Icon from '../../assets/branding/icon.svg';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
@@ -29,7 +30,11 @@ export default function AdminLoginPage() {
     <section className="grid min-h-screen place-items-center bg-[#fff8f8] px-4 py-10">
       <form className="glass-panel w-full max-w-md rounded-[2rem] p-8" onSubmit={submit}>
         <div className="text-center">
-          <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[#7d3c58] text-xl font-black text-white">CH</span>
+          <img
+              src={Icon}
+              alt="Cosmo Home"
+              className="mx-auto h-12 w-13 object-contain"
+          />
           <h1 className="mt-5 text-3xl font-black text-[#352633]">Admin Login</h1>
           <p className="mt-2 text-sm text-[#846071]">Manage Cosmo Home operations securely.</p>
         </div>

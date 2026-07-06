@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { ADMIN_ROUTES, PUBLIC_ROUTES } from '../../constants/routes.constants.js';
+import Icon from '../../assets/branding/icon.svg';
 
 const links = [
   [ADMIN_ROUTES.DASHBOARD, 'Dashboard'],
@@ -14,8 +15,12 @@ export default function AdminSidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-[#ead1d9] bg-[#352633] text-white lg:block">
       <div className="flex h-full flex-col p-6">
-        <NavLink to={ADMIN_ROUTES.DASHBOARD} className="flex items-center gap-3">
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-[#f4c2c2] text-lg font-black text-[#352633]">CH</span>
+        <NavLink to={ADMIN_ROUTES.DASHBOARD} className="flex items-center gap-0">
+          <img
+              src={Icon}
+              alt="Cosmo Home"
+              className="h-12 w-13 object-contain"
+          />
           <span>
             <span className="block text-xl font-black">Cosmo Home</span>
             <span className="text-xs font-semibold text-white/60">Admin Console</span>
