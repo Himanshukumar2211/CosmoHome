@@ -72,13 +72,10 @@ export const updateSettingsService = async (body, adminId) => {
         ...payload,
         updatedBy: adminId,
       },
-      $setOnInsert: defaultSettings,
     },
     {
       new: true,
-      upsert: true,
       runValidators: true,
-      setDefaultsOnInsert: true,
     },
   ).populate('homepage.featuredServiceIds updatedBy', 'name email');
 
