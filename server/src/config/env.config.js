@@ -2,8 +2,28 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+const nodeEnv = process.env.NODE_ENV || 'development';
+const isProductionEnv = nodeEnv === 'production';
+const requiredProductionEnv = [
+  'MONGODB_URI',
+  'JWT_SECRET',
+  'COOKIE_SECRET',
+  'CLIENT_URL',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
+];
+
+if (isProductionEnv) {
+  const missingEnv = requiredProductionEnv.filter((key) => !process.env[key]?.trim());
+
+  if (missingEnv.length) {
+    throw new Error(`Missing required production environment variable(s): ${missingEnv.join(', ')}`);
+  }
+}
+
 export const env = {
-  nodeEnv: process.env.NODE_ENV || 'development',
+  nodeEnv,
   port: Number(process.env.PORT || 9000),
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   mongoUri: process.env.MONGODB_URI || '',
@@ -22,4 +42,4 @@ export const env = {
   adminSeedUpdateExisting: process.env.ADMIN_SEED_UPDATE_EXISTING === 'true',
 };
 
-export const isProduction = env.nodeEnv === 'production';
+export const isProduction = isProductionEnv;

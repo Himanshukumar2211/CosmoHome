@@ -69,7 +69,7 @@ export default function HomePage() {
   }, []);
 
   const startingPrice = data.services.length ? Math.min(...data.services.map((service) => service.discountPrice ?? service.price ?? 0)) : 0;
-  const averageRating = `${data.stats.averageRating.toFixed(1)}/5.0`;
+  const averageRating = `${data.stats.averageRating.toFixed(1)}/5`;
   const beautyRituals = `${data.stats.activeServices}+`;
 
   const updateReviewForm = (event) => setReviewForm((current) => ({ ...current, [event.target.name]: event.target.value }));

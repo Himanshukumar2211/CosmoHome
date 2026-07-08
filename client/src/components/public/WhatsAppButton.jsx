@@ -11,8 +11,9 @@ export default function WhatsAppButton({
 
   const phone =
     settings?.whatsappNumber ||
-    import.meta.env.VITE_WHATSAPP_NUMBER ||
-    '919999999999';
+    import.meta.env.VITE_WHATSAPP_NUMBER;
+
+  if (!phone) return null;
 
   return (
     <Button

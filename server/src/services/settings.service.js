@@ -2,12 +2,6 @@ import Settings from '../models/Settings.model.js';
 
 const publicProjection = '-updatedBy';
 
-const defaultSettings = {
-  businessName: 'Cosmo Home',
-  businessPhone: '0000000000',
-  whatsappNumber: '0000000000',
-};
-
 const asArray = (value) => {
   if (Array.isArray(value)) {
     return value;
@@ -44,24 +38,13 @@ const normalizeSettingsPayload = (body) => {
 };
 
 export const getSettingsService = async () => {
-  const settings = await Settings.findOneAndUpdate({}, { $setOnInsert: defaultSettings }, {
-    new: true,
-    upsert: true,
-    setDefaultsOnInsert: true,
-    runValidators: true,
-  }).populate('homepage.featuredServiceIds updatedBy', 'name email');
+  const settings = await Settings.findOne().populate('homepage.featuredServiceIds updatedBy', 'name email');
 
   return settings;
 };
 
 export const getPublicSettingsService = async () =>
-  Settings.findOneAndUpdate({}, { $setOnInsert: defaultSettings }, {
-    new: true,
-    upsert: true,
-    setDefaultsOnInsert: true,
-    runValidators: true,
-    projection: publicProjection,
-  }).populate('homepage.featuredServiceIds');
+  Settings.findOne({}, publicProjection).populate('homepage.featuredServiceIds');
 
 export const updateSettingsService = async (body, adminId) => {
   const payload = normalizeSettingsPayload(body);
@@ -75,6 +58,8 @@ export const updateSettingsService = async (body, adminId) => {
     },
     {
       new: true,
+      upsert: true,
+      setDefaultsOnInsert: true,
       runValidators: true,
     },
   ).populate('homepage.featuredServiceIds updatedBy', 'name email');
