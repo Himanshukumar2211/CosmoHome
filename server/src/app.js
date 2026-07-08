@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import { getDatabaseStatus } from './config/db.config.js';
 import { env } from './config/env.config.js';
 import { corsOptions } from './config/cors.config.js';
 import { apiRateLimiter } from './config/rateLimit.config.js';
@@ -23,7 +24,14 @@ app.use(cookieParser(env.cookieSecret));
 app.use(sanitizeRequest);
 
 app.get('/health', (_req, res) => {
-  res.status(200).json({ success: true, message: 'Cosmo Home API is healthy' });
+  const database = getDatabaseStatus();
+  const healthy = !database.configured || database.readyState === 1;
+
+  res.status(healthy ? 200 : 503).json({
+    success: healthy,
+    message: healthy ? 'Cosmo Home API is healthy' : 'Cosmo Home API database connection is unavailable',
+    database,
+  });
 });
 
 app.use('/api', routes);
