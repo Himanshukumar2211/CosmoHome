@@ -16,7 +16,7 @@ import { organizationStructuredData } from '../../SEO/structuredData.js';
 import { getServices } from '../../services/services.api.js';
 import { getGallery } from '../../services/gallery.api.js';
 import { createReview, getReviews } from '../../services/reviews.api.js';
-import { unwrapApiList } from '../../utils/apiData.js';
+import { unwrapApiData, unwrapApiList } from '../../utils/apiData.js';
 import { formatCurrency } from '../../utils/formatCurrency.js';
 
 const SectionTitle = ({ eyebrow, title, text }) => (
@@ -30,7 +30,13 @@ const SectionTitle = ({ eyebrow, title, text }) => (
 const initialReviewForm = { customerName: '', serviceName: '', rating: '5', comment: '' };
 
 export default function HomePage() {
-  const [data, setData] = useState({ services: [], gallery: [], reviews: [], loading: true });
+  const [data, setData] = useState({
+    services: [],
+    gallery: [],
+    reviews: [],
+    stats: { averageRating: 0, activeServices: 0 },
+    loading: true,
+  });
   const [reviewForm, setReviewForm] = useState(initialReviewForm);
   const [reviewImage, setReviewImage] = useState(null);
   const [reviewStatus, setReviewStatus] = useState({ loading: false, error: '', success: '' });
@@ -43,10 +49,17 @@ export default function HomePage() {
       getReviews({ approved: true, limit: 100 }),
     ]).then((results) => {
       if (!active) return;
+      const servicesPayload = results[0].status === 'fulfilled' ? unwrapApiData(results[0].value) : {};
+      const reviewsPayload = results[2].status === 'fulfilled' ? unwrapApiData(results[2].value) : {};
+
       setData({
         services: results[0].status === 'fulfilled' ? unwrapApiList(results[0].value, 'services') : [],
         gallery: results[1].status === 'fulfilled' ? unwrapApiList(results[1].value, 'galleryItems') : [],
         reviews: results[2].status === 'fulfilled' ? unwrapApiList(results[2].value, 'reviews') : [],
+        stats: {
+          averageRating: Number(reviewsPayload.averageRating ?? 0),
+          activeServices: Number(servicesPayload.activeServices ?? 0),
+        },
         loading: false,
       });
     });
@@ -56,6 +69,8 @@ export default function HomePage() {
   }, []);
 
   const startingPrice = data.services.length ? Math.min(...data.services.map((service) => service.discountPrice ?? service.price ?? 0)) : 0;
+  const averageRating = `${data.stats.averageRating.toFixed(1)}/5.0`;
+  const beautyRituals = `${data.stats.activeServices}+`;
 
   const updateReviewForm = (event) => setReviewForm((current) => ({ ...current, [event.target.name]: event.target.value }));
 
@@ -100,8 +115,8 @@ export default function HomePage() {
           </div>
           <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
             {[
-              ['4.9/5', 'Average rating'],
-              ['25+', 'Beauty rituals'],
+              [averageRating, 'Average rating'],
+              [beautyRituals, 'Beauty rituals'],
               ['7 days', 'Open weekly'],
             ].map(([value, label]) => (
               <div className="glass-panel rounded-3xl p-4" key={label}>

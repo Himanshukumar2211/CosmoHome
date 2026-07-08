@@ -46,17 +46,19 @@ export const listServicesService = async (query = {}, isAdmin = false) => {
 
   const sortBy = getAllowedSortField(query.sortBy, allowedSortFields, 'displayOrder');
   const sortOrder = query.sortOrder === 'desc' ? -1 : 1;
-  const [items, total] = await Promise.all([
+  const [items, total, activeServices] = await Promise.all([
     Service.find(filter)
       .populate('createdBy updatedBy', 'name email')
       .sort({ [sortBy]: sortOrder, createdAt: -1 })
       .skip(skip)
       .limit(limit),
     Service.countDocuments(filter),
+    Service.countDocuments({ isActive: true }),
   ]);
 
   return {
     items,
+    activeServices,
     pagination: {
       page,
       limit,

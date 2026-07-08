@@ -31,13 +31,20 @@ export const listReviewsService = async (query = {}, isAdmin = false) => {
 
   const sortBy = getAllowedSortField(query.sortBy, allowedSortFields, 'createdAt');
   const sortOrder = query.sortOrder === 'asc' ? 1 : -1;
-  const [items, total] = await Promise.all([
+  const [items, total, ratingStats] = await Promise.all([
     Review.find(filter).sort({ isFeatured: -1, [sortBy]: sortOrder }).skip(skip).limit(limit),
     Review.countDocuments(filter),
+    Review.aggregate([
+      { $match: { isApproved: true } },
+      { $group: { _id: null, averageRating: { $avg: '$rating' } } },
+    ]),
   ]);
+
+  const averageRating = ratingStats.length ? Number(ratingStats[0].averageRating.toFixed(1)) : 0;
 
   return {
     items,
+    averageRating,
     pagination: {
       page,
       limit,
