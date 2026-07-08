@@ -86,7 +86,7 @@ export default function HomePage() {
       setReviewForm(initialReviewForm);
       setReviewImage(null);
       event.target.reset();
-      setReviewStatus({ loading: false, error: '', success: 'Thank you. Your review is pending approval.' });
+      setReviewStatus({ loading: false, error: '', success: 'Thank you for sharing your experience! Your review has been submitted successfully.' });
     } catch (error) {
       setReviewStatus({ loading: false, error: error?.response?.data?.message || 'Unable to submit your review right now.', success: '' });
     }
