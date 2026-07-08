@@ -22,7 +22,6 @@ const blank = {
   price: '',
   discountPrice: '',
   durationMinutes: '',
-  displayOrder: '0',
   isActive: true,
   isFeatured: false,
 };
@@ -44,7 +43,7 @@ export default function AdminServicesPage() {
   const load = () => {
     setLoading(true);
     setError('');
-    getServices({ ...filters, limit: 10, sortBy: 'displayOrder', sortOrder: 'asc' })
+    getServices({ ...filters, limit: 10, sortBy: 'createdAt', sortOrder: 'desc' })
       .then((response) => {
         setRows(unwrapApiList(response));
         setPagination(unwrapApiData(response)?.pagination || { page: 1, pages: 1, total: 0 });
@@ -68,7 +67,6 @@ export default function AdminServicesPage() {
             price: service.price ?? '',
             discountPrice: service.discountPrice ?? '',
             durationMinutes: service.durationMinutes ?? '',
-            displayOrder: service.displayOrder ?? '0',
             isActive: service.isActive ?? true,
             isFeatured: service.isFeatured ?? false,
           }
@@ -163,7 +161,6 @@ export default function AdminServicesPage() {
             <Input label="Price" type="number" min="0" value={form.price} onChange={(event) => setForm({ ...form, price: event.target.value })} required />
             <Input label="Discount price" type="number" min="0" value={form.discountPrice} onChange={(event) => setForm({ ...form, discountPrice: event.target.value })} />
             <Input label="Duration minutes" type="number" min="5" value={form.durationMinutes} onChange={(event) => setForm({ ...form, durationMinutes: event.target.value })} />
-            <Input label="Display order" type="number" min="0" value={form.displayOrder} onChange={(event) => setForm({ ...form, displayOrder: event.target.value })} />
             <Textarea label="Description" className="md:col-span-2" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} required minLength={10} />
             <FileUpload label="Service image" accept="image/*" onChange={(event) => setImage(event.target.files?.[0])} />
             <div className="grid content-center gap-3 rounded-3xl bg-[#fff8f8] p-4">

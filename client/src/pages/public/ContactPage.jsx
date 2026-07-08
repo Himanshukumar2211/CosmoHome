@@ -81,15 +81,6 @@ export default function ContactPage() {
           </Button>
         </form>
       </section>
-      <section className="section-shell pb-16">
-        <div className="grid min-h-72 place-items-center rounded-[2rem] border border-[#ead1d9] bg-[#f8dfe5] p-8 text-center">
-          <div>
-            <p className="text-sm font-black uppercase tracking-[0.22em] text-[#7d3c58]">Google Maps</p>
-            <h2 className="mt-3 text-3xl font-black">Cosmo Home service map</h2>
-            <p className="mt-3 text-[#6f5364]">Map embed can be connected once the final business location is configured.</p>
-          </div>
-        </div>
-      </section>
     </>
   );
 }

@@ -8,7 +8,7 @@ import Input from '../../components/common/Input.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import Select from '../../components/common/Select.jsx';
 import { useToast } from '../../hooks/useToast.js';
-import { deleteContactMessage, getContactMessages, updateContactMessage } from '../../services/contactMessages.api.js';
+import { deleteContactMessage, getContactMessages } from '../../services/contactMessages.api.js';
 import { unwrapApiData, unwrapApiList } from '../../utils/apiData.js';
 import { formatDate } from '../../utils/formatDate.js';
 
@@ -40,12 +40,6 @@ export default function AdminContactMessagesPage() {
   };
 
   useEffect(load, [filters]);
-
-  const changeStatus = async (row, status) => {
-    await updateContactMessage(row._id, { status });
-    pushToast({ message: 'Contact message updated.' });
-    load();
-  };
 
   const remove = async () => {
     await deleteContactMessage(confirmDelete._id);
@@ -98,8 +92,6 @@ export default function AdminContactMessagesPage() {
                 header: 'Actions',
                 render: (row) => (
                   <div className="flex flex-wrap gap-2">
-                    <Button variant="secondary" className="min-h-9 px-3 py-1" onClick={() => changeStatus(row, 'read')} disabled={row.status === 'read'}>Mark Read</Button>
-                    <Button variant="ghost" className="min-h-9 px-3 py-1" onClick={() => changeStatus(row, 'archived')} disabled={row.status === 'archived'}>Archive</Button>
                     <Button variant="ghost" className="min-h-9 px-3 py-1 text-[#b4234d]" onClick={() => setConfirmDelete(row)}>Delete</Button>
                   </div>
                 ),

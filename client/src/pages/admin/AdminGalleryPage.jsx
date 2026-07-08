@@ -9,12 +9,11 @@ import FileUpload from '../../components/common/FileUpload.jsx';
 import Input from '../../components/common/Input.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import Modal from '../../components/common/Modal.jsx';
-import Textarea from '../../components/common/Textarea.jsx';
 import { useToast } from '../../hooks/useToast.js';
-import { createGalleryItem, deleteGalleryItem, getGallery, updateGalleryItem } from '../../services/gallery.api.js';
+import { createGalleryItem, deleteGalleryItem, getGallery } from '../../services/gallery.api.js';
 import { unwrapApiData, unwrapApiList } from '../../utils/apiData.js';
 
-const blank = { title: '', description: '', category: 'Makeup', tags: '', displayOrder: '0', isActive: true };
+const blank = { title: '', category: 'Makeup', tags: '' };
 
 export default function AdminGalleryPage() {
   const { pushToast } = useToast();
@@ -23,7 +22,6 @@ export default function AdminGalleryPage() {
   const [filters, setFilters] = useState({ search: '', category: '', page: 1 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [editing, setEditing] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState(blank);
   const [image, setImage] = useState(null);
@@ -33,7 +31,7 @@ export default function AdminGalleryPage() {
   const load = () => {
     setLoading(true);
     setError('');
-    getGallery({ ...filters, limit: 10, sortBy: 'displayOrder', sortOrder: 'asc' })
+    getGallery({ ...filters, limit: 10, sortBy: 'createdAt', sortOrder: 'desc' })
       .then((response) => {
         setRows(unwrapApiList(response));
         setPagination(unwrapApiData(response)?.pagination || { page: 1, pages: 1, total: 0 });
@@ -44,11 +42,10 @@ export default function AdminGalleryPage() {
 
   useEffect(load, [filters]);
 
-  const openForm = (item = null) => {
-    setEditing(item);
+  const openForm = () => {
     setFormOpen(true);
     setImage(null);
-    setForm(item ? { ...blank, ...item, tags: item.tags?.join(', ') || '' } : blank);
+    setForm(blank);
   };
 
   const submit = async (event) => {
@@ -58,11 +55,9 @@ export default function AdminGalleryPage() {
     Object.entries(form).forEach(([key, value]) => payload.append(key, value));
     if (image) payload.append('image', image);
     try {
-      if (editing) await updateGalleryItem(editing._id, payload);
-      else await createGalleryItem(payload);
-      pushToast({ message: editing ? 'Gallery item updated.' : 'Gallery item uploaded.' });
+      await createGalleryItem(payload);
+      pushToast({ message: 'Gallery item uploaded.' });
       setFormOpen(false);
-      setEditing(null);
       setForm(blank);
       load();
     } catch (err) {
@@ -84,7 +79,7 @@ export default function AdminGalleryPage() {
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <h2 className="text-3xl font-black">Gallery</h2>
-          <p className="text-sm text-[#846071]">Upload, edit, publish, and preview portfolio images.</p>
+          <p className="text-sm text-[#846071]">Upload and preview portfolio images.</p>
         </div>
         <Button onClick={() => openForm()}>Upload Image</Button>
       </div>
@@ -109,7 +104,6 @@ export default function AdminGalleryPage() {
                 header: 'Actions',
                 render: (row) => (
                   <div className="flex gap-2">
-                    <Button variant="secondary" className="min-h-9 px-3 py-1" onClick={() => openForm(row)}>Edit</Button>
                     <Button variant="ghost" className="min-h-9 px-3 py-1 text-[#b4234d]" onClick={() => setConfirmDelete(row)}>Delete</Button>
                   </div>
                 ),
@@ -126,23 +120,18 @@ export default function AdminGalleryPage() {
         </>
       ) : null}
 
-      <Modal open={formOpen} onClose={() => { setFormOpen(false); setEditing(null); setForm(blank); }} labelledBy="gallery-form-title">
+      <Modal open={formOpen} onClose={() => { setFormOpen(false); setForm(blank); }} labelledBy="gallery-form-title">
         <form className="p-2" onSubmit={submit}>
-          <h2 id="gallery-form-title" className="text-2xl font-black">{editing ? 'Edit Gallery Image' : 'Upload Gallery Image'}</h2>
+          <h2 id="gallery-form-title" className="text-2xl font-black">Upload Gallery Image</h2>
           <div className="mt-5 grid gap-5 md:grid-cols-2">
             <Input label="Title" value={form.title} onChange={(event) => setForm({ ...form, title: event.target.value })} required />
             <Input label="Category" value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })} required />
             <Input label="Tags" value={form.tags} onChange={(event) => setForm({ ...form, tags: event.target.value })} placeholder="bridal, glow, hair" />
-            <Input label="Display order" type="number" min="0" value={form.displayOrder} onChange={(event) => setForm({ ...form, displayOrder: event.target.value })} />
-            <Textarea label="Description" className="md:col-span-2" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
-            <FileUpload label="Gallery image" accept="image/*" required={!editing} onChange={(event) => setImage(event.target.files?.[0])} />
-            <label className="flex items-center gap-3 rounded-3xl bg-[#fff8f8] p-4 text-sm font-bold">
-              <input type="checkbox" checked={form.isActive} onChange={(event) => setForm({ ...form, isActive: event.target.checked })} /> Active
-            </label>
+            <FileUpload label="Gallery image" accept="image/*" required onChange={(event) => setImage(event.target.files?.[0])} />
           </div>
           <div className="mt-6 flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => { setFormOpen(false); setEditing(null); setForm(blank); }}>Cancel</Button>
-            <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Gallery Item'}</Button>
+            <Button variant="secondary" onClick={() => { setFormOpen(false); setForm(blank); }}>Cancel</Button>
+            <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Upload Image'}</Button>
           </div>
         </form>
       </Modal>

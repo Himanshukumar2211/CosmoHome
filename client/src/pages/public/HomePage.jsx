@@ -188,7 +188,7 @@ export default function HomePage() {
         <section className="section-shell py-16">
           <SectionTitle eyebrow="Gallery" title="A glimpse of our work" />
           <div className="mt-10">
-            <GalleryGrid items={data.gallery.slice(0, 6)} />
+            <GalleryGrid items={data.gallery.slice(0, 4)} />
           </div>
         </section>
       ) : null}

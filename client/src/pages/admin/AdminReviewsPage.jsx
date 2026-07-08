@@ -22,14 +22,13 @@ const blank = {
   serviceName: '',
   customerLocation: '',
   isApproved: true,
-  isFeatured: false,
 };
 
 export default function AdminReviewsPage() {
   const { pushToast } = useToast();
   const [rows, setRows] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
-  const [filters, setFilters] = useState({ search: '', approved: '', featured: '', page: 1 });
+  const [filters, setFilters] = useState({ search: '', approved: '', page: 1 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editing, setEditing] = useState(null);
@@ -100,22 +99,17 @@ export default function AdminReviewsPage() {
     <div className="grid gap-6">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <h2 className="text-3xl font-black">Reviews</h2>
-          <p className="text-sm text-[#846071]">Approve, feature, edit, and publish customer testimonials.</p>
+          <Button onClick={() => openForm()}>Add Review</Button>
+          <h2 className="mt-4 text-3xl font-black">Reviews</h2>
+          <p className="text-sm text-[#846071]">Approve and publish customer testimonials.</p>
         </div>
-        <Button onClick={() => openForm()}>Create Review</Button>
       </div>
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-2">
         <Input placeholder="Search reviews" value={filters.search} onChange={(event) => setFilters({ ...filters, search: event.target.value, page: 1 })} />
         <Select value={filters.approved} onChange={(event) => setFilters({ ...filters, approved: event.target.value, page: 1 })}>
           <option value="">All approval states</option>
           <option value="true">Approved</option>
           <option value="false">Pending</option>
-        </Select>
-        <Select value={filters.featured} onChange={(event) => setFilters({ ...filters, featured: event.target.value, page: 1 })}>
-          <option value="">All featured states</option>
-          <option value="true">Featured</option>
-          <option value="false">Not featured</option>
         </Select>
       </div>
       {loading ? <Loader /> : null}
@@ -130,15 +124,12 @@ export default function AdminReviewsPage() {
               { key: 'rating', header: 'Rating', render: (row) => `${row.rating}/5` },
               { key: 'serviceName', header: 'Service', render: (row) => row.serviceName || '-' },
               { key: 'isApproved', header: 'Approval', render: (row) => <StatusBadge status={row.isApproved ? 'approved' : 'pending'} /> },
-              { key: 'isFeatured', header: 'Featured', render: (row) => (row.isFeatured ? <StatusBadge status="featured" /> : '-') },
               {
                 key: 'actions',
                 header: 'Actions',
                 render: (row) => (
                   <div className="flex flex-wrap gap-2">
-                    <Button variant="secondary" className="min-h-9 px-3 py-1" onClick={() => openForm(row)}>Edit</Button>
                     <Button className="min-h-9 px-3 py-1" onClick={() => quickUpdate(row, { isApproved: !row.isApproved })}>{row.isApproved ? 'Reject' : 'Approve'}</Button>
-                    <Button variant="ghost" className="min-h-9 px-3 py-1" onClick={() => quickUpdate(row, { isFeatured: !row.isFeatured })}>{row.isFeatured ? 'Unfeature' : 'Feature'}</Button>
                     <Button variant="ghost" className="min-h-9 px-3 py-1 text-[#b4234d]" onClick={() => setConfirmDelete(row)}>Delete</Button>
                   </div>
                 ),
@@ -167,7 +158,6 @@ export default function AdminReviewsPage() {
             <FileUpload label="Customer image" accept="image/*" onChange={(event) => setImage(event.target.files?.[0])} />
             <div className="grid content-center gap-3 rounded-3xl bg-[#fff8f8] p-4">
               <label className="flex items-center gap-3 text-sm font-bold"><input type="checkbox" checked={form.isApproved} onChange={(event) => setForm({ ...form, isApproved: event.target.checked })} /> Approved</label>
-              <label className="flex items-center gap-3 text-sm font-bold"><input type="checkbox" checked={form.isFeatured} onChange={(event) => setForm({ ...form, isFeatured: event.target.checked })} /> Featured</label>
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-3">
