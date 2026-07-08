@@ -13,6 +13,40 @@ export default function PublicLayout() {
     ['/beautician-apply', 'Join Us'],
     ['/contact', 'Contact'],
   ];
+  const socialLinks = [
+    {
+      label: 'Instagram',
+      href: 'https://www.instagram.com/cosmo_hazaribag/',
+      external: true,
+      icon: (
+        <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="2" />
+          <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+          <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Facebook',
+      href: 'https://www.facebook.com/people/cosmo-home/61591672199326/?rdid=DepSRtcFTfwwfjhl&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F14iQEL8Z2Yo%2F%3Fref%3D1',
+      external: true,
+      icon: (
+        <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14 8.5V6.7c0-.8.4-1.2 1.3-1.2H17V2.4c-.8-.1-1.7-.2-2.6-.2-2.6 0-4.4 1.6-4.4 4.4v1.9H7v3.6h3V22h3.8v-9.9h2.9l.5-3.6H14Z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Email',
+      href: 'mailto:cosmohome02@gmail.com',
+      icon: (
+        <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
+          <path d="M4 6h16v12H4V6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+          <path d="m4 7 8 6 8-6" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
     <div className="min-h-screen text-[#352633]">
@@ -98,6 +132,20 @@ export default function PublicLayout() {
           <div>
             <h3 className="font-bold">Working Hours</h3>
             <p className="mt-4 text-sm leading-6 text-white/72">Monday to Sunday<br />9:00 AM - 8:00 PM</p>
+            <div className="mt-5 flex gap-3">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  aria-label={link.label}
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/15 text-white/72 transition hover:border-white/40 hover:text-white"
+                  target={link.external ? '_blank' : undefined}
+                  rel={link.external ? 'noreferrer' : undefined}
+                >
+                  {link.icon}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </footer>

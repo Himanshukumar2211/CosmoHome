@@ -88,6 +88,7 @@ export default function AdminContactMessagesPage() {
               { key: 'name', header: 'Name' },
               { key: 'phone', header: 'Phone' },
               { key: 'email', header: 'Email', render: (row) => row.email || '-' },
+              { key: 'purpose', header: 'Purpose', render: (row) => row.purpose || '-' },
               { key: 'source', header: 'Source', render: (row) => sourceLabels[row.source] || row.source || '-' },
               { key: 'status', header: 'Status', render: (row) => <StatusBadge status={row.status} /> },
               { key: 'createdAt', header: 'Created', render: (row) => formatDate(row.createdAt) },

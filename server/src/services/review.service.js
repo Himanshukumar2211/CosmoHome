@@ -6,6 +6,7 @@ import { buildSearchRegex, getAllowedSortField, parseBoolean } from '../utils/qu
 import { deleteFileService, uploadFileService } from './upload.service.js';
 
 const allowedSortFields = new Set(['customerName', 'rating', 'createdAt', 'updatedAt']);
+const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 
 export const listReviewsService = async (query = {}, isAdmin = false) => {
   const { page, limit, skip } = getPagination(query);
@@ -48,13 +49,14 @@ export const listReviewsService = async (query = {}, isAdmin = false) => {
 
 export const createReviewService = async ({ body, file, admin }) => {
   const image = await uploadFileService(file, CLOUDINARY_FOLDERS.REVIEWS);
+  const isAdminCreated = Boolean(admin) && (hasOwn(body, 'isApproved') || hasOwn(body, 'isFeatured'));
 
   try {
     return await Review.create({
       ...body,
       image,
-      createdByAdmin: Boolean(admin),
-      isApproved: Boolean(admin),
+      createdByAdmin: isAdminCreated,
+      isApproved: isAdminCreated ? parseBoolean(body.isApproved ?? true) : false,
     });
   } catch (error) {
     await deleteFileService(image);

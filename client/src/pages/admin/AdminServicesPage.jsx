@@ -59,7 +59,21 @@ export default function AdminServicesPage() {
     setEditing(service);
     setFormOpen(true);
     setImage(null);
-    setForm(service ? { ...blank, ...service, discountPrice: service.discountPrice || '', durationMinutes: service.durationMinutes || '' } : blank);
+    setForm(
+      service
+        ? {
+            name: service.name || '',
+            description: service.description || '',
+            category: service.category || 'Hair',
+            price: service.price ?? '',
+            discountPrice: service.discountPrice ?? '',
+            durationMinutes: service.durationMinutes ?? '',
+            displayOrder: service.displayOrder ?? '0',
+            isActive: service.isActive ?? true,
+            isFeatured: service.isFeatured ?? false,
+          }
+        : blank,
+    );
   };
 
   const submit = async (event) => {

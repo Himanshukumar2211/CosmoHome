@@ -11,6 +11,20 @@ const contactMessageSchema = new mongoose.Schema(
       trim: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'],
     },
+    purpose: {
+      type: String,
+      enum: [
+        'General Enquiry',
+        'Service Booking',
+        'Partnership',
+        'Salon Collaboration',
+        'Franchise Enquiry',
+        'Corporate Booking',
+        'Complaint',
+        'Feedback',
+      ],
+      default: 'General Enquiry',
+    },
     message: { type: String, required: true, minlength: 10, maxlength: 2000 },
     source: {
       type: String,

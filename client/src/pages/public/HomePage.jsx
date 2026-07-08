@@ -27,7 +27,7 @@ const SectionTitle = ({ eyebrow, title, text }) => (
   </div>
 );
 
-const initialReviewForm = { customerName: '', rating: '5', comment: '' };
+const initialReviewForm = { customerName: '', serviceName: '', rating: '5', comment: '' };
 
 export default function HomePage() {
   const [data, setData] = useState({ services: [], gallery: [], reviews: [], loading: true });
@@ -40,7 +40,7 @@ export default function HomePage() {
     Promise.allSettled([
       getServices({ active: true, featured: true, limit: 6 }),
       getGallery({ active: true, limit: 6 }),
-      getReviews({ approved: true, limit: 3 }),
+      getReviews({ approved: true, limit: 100 }),
     ]).then((results) => {
       if (!active) return;
       setData({
@@ -150,8 +150,12 @@ export default function HomePage() {
       {data.reviews.length ? (
         <section className="section-shell py-16">
           <SectionTitle eyebrow="Testimonials" title="Customers trust the Cosmo Home touch" />
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {data.reviews.slice(0, 3).map((review) => <ReviewCard key={review._id || review.id} review={review} />)}
+          <div className="mt-10 flex gap-6 overflow-x-auto pb-4">
+            {data.reviews.map((review) => (
+              <div className="w-full shrink-0 md:w-[calc((100%_-_3rem)/3)]" key={review._id || review.id}>
+                <ReviewCard review={review} />
+              </div>
+            ))}
           </div>
         </section>
       ) : null}
@@ -167,6 +171,7 @@ export default function HomePage() {
             <div className="grid gap-5 md:grid-cols-2">
               <Input label="Name" name="customerName" value={reviewForm.customerName} onChange={updateReviewForm} required minLength={2} />
               <Input label="Rating" name="rating" type="number" min="1" max="5" value={reviewForm.rating} onChange={updateReviewForm} required />
+              <Input label="Service Availed" name="serviceName" value={reviewForm.serviceName} onChange={updateReviewForm} required minLength={2} />
               <Textarea label="Review" name="comment" value={reviewForm.comment} onChange={updateReviewForm} required minLength={10} className="md:col-span-2" />
               <FileUpload label="Photo" accept="image/*" helper="Optional" onChange={(event) => setReviewImage(event.target.files?.[0])} className="md:col-span-2" />
             </div>

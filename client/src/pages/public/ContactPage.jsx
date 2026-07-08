@@ -2,11 +2,22 @@ import { useState } from 'react';
 import MetaTags from '../../SEO/MetaTags.jsx';
 import Button from '../../components/common/Button.jsx';
 import Input from '../../components/common/Input.jsx';
+import Select from '../../components/common/Select.jsx';
 import Textarea from '../../components/common/Textarea.jsx';
 import WhatsAppButton from '../../components/public/WhatsAppButton.jsx';
 import { createContactMessage } from '../../services/contactMessages.api.js';
 
-const initialForm = { name: '', phone: '', email: '', message: '' };
+const initialForm = { name: '', phone: '', email: '', purpose: 'General Enquiry', message: '' };
+const purposeOptions = [
+  'General Enquiry',
+  'Service Booking',
+  'Partnership',
+  'Salon Collaboration',
+  'Franchise Enquiry',
+  'Corporate Booking',
+  'Complaint',
+  'Feedback',
+];
 
 export default function ContactPage() {
   const [form, setForm] = useState(initialForm);
@@ -54,6 +65,13 @@ export default function ContactPage() {
             <Input label="Full name" name="name" value={form.name} onChange={update} required minLength={2} />
             <Input label="Phone" name="phone" value={form.phone} onChange={update} required minLength={7} />
             <Input label="Email" name="email" type="email" value={form.email} onChange={update} className="md:col-span-2" />
+            <Select label="Purpose" name="purpose" value={form.purpose} onChange={update} className="md:col-span-2">
+              {purposeOptions.map((purpose) => (
+                <option key={purpose} value={purpose}>
+                  {purpose}
+                </option>
+              ))}
+            </Select>
             <Textarea label="Message" name="message" value={form.message} onChange={update} required minLength={10} className="md:col-span-2" />
           </div>
           {status.error ? <p className="mt-4 text-sm font-semibold text-[#b4234d]">{status.error}</p> : null}
