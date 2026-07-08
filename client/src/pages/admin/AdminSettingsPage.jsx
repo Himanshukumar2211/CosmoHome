@@ -3,7 +3,6 @@ import Button from '../../components/common/Button.jsx';
 import ErrorMessage from '../../components/common/ErrorMessage.jsx';
 import Input from '../../components/common/Input.jsx';
 import Loader from '../../components/common/Loader.jsx';
-import Textarea from '../../components/common/Textarea.jsx';
 import { useToast } from '../../hooks/useToast.js';
 import { getSettings, updateSettings } from '../../services/settings.api.js';
 import { unwrapApiData } from '../../utils/apiData.js';
@@ -13,7 +12,6 @@ const blank = {
   businessEmail: '',
   businessPhone: '',
   whatsappNumber: '',
-  workingHours: 'Monday to Sunday, 9:00 AM - 8:00 PM',
   instagram: '',
   facebook: '',
 };
@@ -35,7 +33,6 @@ export default function AdminSettingsPage() {
         setForm({
           ...blank,
           ...settings,
-          workingHours: typeof settings.workingHours === 'string' ? settings.workingHours : JSON.stringify(settings.workingHours || blank.workingHours, null, 2),
           instagram: settings.socialLinks?.instagram || '',
           facebook: settings.socialLinks?.facebook || '',
         });
@@ -57,7 +54,6 @@ export default function AdminSettingsPage() {
       businessEmail: form.businessEmail,
       businessPhone: form.businessPhone,
       whatsappNumber: form.whatsappNumber,
-      workingHours: form.workingHours,
       socialLinks: {
         instagram: form.instagram,
         facebook: form.facebook,
@@ -82,7 +78,7 @@ export default function AdminSettingsPage() {
     <form className="grid gap-8" onSubmit={submit}>
       <div>
         <h2 className="text-3xl font-black">Settings</h2>
-        <p className="text-sm text-[#846071]">Manage business information, WhatsApp, working hours, and social links.</p>
+        <p className="text-sm text-[#846071]">Manage business information, WhatsApp, and social links.</p>
       </div>
 
       <section className="premium-card rounded-3xl p-6">
@@ -104,7 +100,6 @@ export default function AdminSettingsPage() {
           <Input label="Business email" type="email" value={form.businessEmail} onChange={(event) => update('businessEmail', event.target.value)} readOnly={!editableSections.businessInformation} />
           <Input label="Business phone" value={form.businessPhone} onChange={(event) => update('businessPhone', event.target.value)} readOnly={!editableSections.businessInformation} required />
           <Input label="WhatsApp number" value={form.whatsappNumber} onChange={(event) => update('whatsappNumber', event.target.value)} readOnly={!editableSections.businessInformation} required />
-          <Textarea label="Working hours" value={form.workingHours} onChange={(event) => update('workingHours', event.target.value)} readOnly={!editableSections.businessInformation} className="md:col-span-2" />
         </div>
       </section>
 

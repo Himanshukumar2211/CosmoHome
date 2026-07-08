@@ -1,10 +1,13 @@
+import { useContext } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import WhatsAppButton from '../components/public/WhatsAppButton.jsx';
 import Icon from "../assets/branding/icon.svg";
+import { AppContext } from '../context/AppContext.jsx';
 
 export default function PublicLayout() {
   const location = useLocation();
+  const { settings } = useContext(AppContext);
   const links = [
     ['/', 'Home'],
     ['/services', 'Services'],
@@ -16,7 +19,7 @@ export default function PublicLayout() {
   const socialLinks = [
     {
       label: 'Instagram',
-      href: 'https://www.instagram.com/cosmo_hazaribag/',
+      href: settings?.socialLinks?.instagram,
       external: true,
       icon: (
         <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
@@ -28,7 +31,7 @@ export default function PublicLayout() {
     },
     {
       label: 'Facebook',
-      href: 'https://www.facebook.com/people/cosmo-home/61591672199326/?rdid=DepSRtcFTfwwfjhl&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F14iQEL8Z2Yo%2F%3Fref%3D1',
+      href: settings?.socialLinks?.facebook,
       external: true,
       icon: (
         <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -38,7 +41,7 @@ export default function PublicLayout() {
     },
     {
       label: 'Email',
-      href: 'mailto:cosmohome02@gmail.com',
+      href: settings?.businessEmail ? `mailto:${settings.businessEmail}` : '',
       icon: (
         <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
           <path d="M4 6h16v12H4V6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
@@ -46,7 +49,16 @@ export default function PublicLayout() {
         </svg>
       ),
     },
-  ];
+    {
+      label: 'Phone',
+      href: settings?.businessPhone ? `tel:${settings.businessPhone}` : '',
+      icon: (
+        <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
+          <path d="M6.6 3.5 9 3l2 5-1.7 1.1a12 12 0 0 0 5.6 5.6L16 13l5 2-.5 2.4c-.3 1.5-1.6 2.6-3.2 2.6A14.3 14.3 0 0 1 4 6.7c0-1.6 1.1-2.9 2.6-3.2Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+  ].filter((link) => link.href);
 
   return (
     <div className="min-h-screen text-[#352633]">
