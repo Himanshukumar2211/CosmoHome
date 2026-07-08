@@ -9,16 +9,43 @@ import { registerBeautician } from '../../services/beauticians.api.js';
 
 const initialForm = {
   fullName: '',
-  phone: '',
-  email: '',
+  fathersHusbandName: '',
+  dateOfBirth: '',
   gender: '',
-  experienceYears: '',
-  specializations: '',
+  phone: '',
+  alternatePhone: '',
+  email: '',
   address: '',
   city: '',
   state: '',
   pincode: '',
+  aadhaarNumber: '',
+  panNumber: '',
+  experienceYears: '',
+  currentProfession: '',
+  workPreference: '',
+  specializations: [],
+  otherService: '',
+  workedInSalonBefore: '',
+  previousSalonName: '',
+  ownToolsProducts: '',
+  preferredWorkAreas: '',
+  declarationAccepted: false,
 };
+
+const serviceOptions = [
+  'Facial',
+  'Cleanup',
+  'Waxing',
+  'Threading',
+  'Hair Spa',
+  'Hair Cut / Styling',
+  'Party Makeup',
+  'Bridal Makeup',
+  'Mehendi',
+  'Nail Art',
+  'Others',
+];
 
 export default function BeauticianApplyPage() {
   const [step, setStep] = useState(0);
@@ -26,18 +53,38 @@ export default function BeauticianApplyPage() {
   const [files, setFiles] = useState({});
   const [status, setStatus] = useState({ loading: false, error: '', success: false });
 
-  const update = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  const update = (event) => {
+    const { name, type, checked, value } = event.target;
+    if (name === 'specializations') {
+      setForm((current) => ({
+        ...current,
+        specializations: checked
+          ? [...current.specializations, value]
+          : current.specializations.filter((item) => item !== value),
+      }));
+      return;
+    }
+
+    setForm((current) => ({ ...current, [name]: type === 'checkbox' ? checked : value }));
+  };
   const updateFiles = (event) => setFiles((current) => ({ ...current, [event.target.name]: Array.from(event.target.files || []) }));
 
   const submit = async (event) => {
     event.preventDefault();
     setStatus({ loading: true, error: '', success: false });
     const payload = new FormData();
-    Object.entries(form).forEach(([key, value]) => payload.append(key, value));
+    Object.entries(form).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((item) => payload.append(key, item));
+        return;
+      }
+      if (value !== '') payload.append(key, value);
+    });
     files.profilePhoto?.forEach((file) => payload.append('profilePhoto', file));
     files.governmentId?.forEach((file) => payload.append('governmentId', file));
-    files.certificates?.forEach((file) => payload.append('certificates', file));
-    files.portfolioImages?.forEach((file) => payload.append('portfolioImages', file));
+    files.addressProof?.forEach((file) => payload.append('addressProof', file));
+    files.experienceCertificate?.forEach((file) => payload.append('certificates', file));
+    files.trainingCertificate?.forEach((file) => payload.append('certificates', file));
 
     try {
       await registerBeautician(payload);
@@ -73,7 +120,7 @@ export default function BeauticianApplyPage() {
           <p className="text-sm font-black uppercase tracking-[0.22em] text-[#b76d86]">Beautician Application</p>
           <h1 className="mt-3 text-4xl font-black md:text-6xl">Build your beauty career with Cosmo Home.</h1>
           <div className="mt-8 grid gap-3">
-            {['Personal details', 'Experience and location', 'Documents and portfolio'].map((label, index) => (
+            {['Personal Information', 'Professional Details', 'Document Uploads', 'Declaration'].map((label, index) => (
               <button
                 className={`rounded-2xl px-5 py-4 text-left text-sm font-bold ${step === index ? 'bg-[#7d3c58] text-white' : 'bg-white text-[#5e4354]'}`}
                 key={label}
@@ -90,39 +137,93 @@ export default function BeauticianApplyPage() {
           {step === 0 ? (
             <div className="grid gap-5 md:grid-cols-2">
               <Input label="Full name" name="fullName" value={form.fullName} onChange={update} required minLength={2} />
-              <Input label="Phone" name="phone" value={form.phone} onChange={update} required minLength={7} />
-              <Input label="Email" name="email" type="email" value={form.email} onChange={update} />
-              <Select label="Gender" name="gender" value={form.gender} onChange={update}>
-                <option value="">Prefer not to say</option>
+              <Input label="Father's / Husband's name" name="fathersHusbandName" value={form.fathersHusbandName} onChange={update} required minLength={2} />
+              <Input label="Date of birth" name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={update} required />
+              <Select label="Gender" name="gender" value={form.gender} onChange={update} required>
+                <option value="">Select gender</option>
                 <option value="female">Female</option>
                 <option value="male">Male</option>
                 <option value="other">Other</option>
               </Select>
+              <Input label="Mobile number" name="phone" value={form.phone} onChange={update} required minLength={7} />
+              <Input label="Alternate mobile number" name="alternatePhone" value={form.alternatePhone} onChange={update} required minLength={7} />
+              <Input label="Email address" name="email" type="email" value={form.email} onChange={update} required />
+              <Textarea label="Full address" name="address" value={form.address} onChange={update} required minLength={5} className="md:col-span-2" />
+              <Input label="City" name="city" value={form.city} onChange={update} required />
+              <Input label="State" name="state" value={form.state} onChange={update} required />
+              <Input label="Pincode" name="pincode" value={form.pincode} onChange={update} required />
+              <Input label="Aadhaar number" name="aadhaarNumber" value={form.aadhaarNumber} onChange={update} required minLength={12} maxLength={20} />
+              <Input label="PAN number (optional)" name="panNumber" value={form.panNumber} onChange={update} minLength={10} maxLength={10} />
             </div>
           ) : null}
           {step === 1 ? (
             <div className="grid gap-5 md:grid-cols-2">
-              <Input label="Experience years" name="experienceYears" type="number" min="0" max="50" value={form.experienceYears} onChange={update} required />
-              <Input label="Specializations" name="specializations" value={form.specializations} onChange={update} required placeholder="Hair, makeup, facial" />
-              <Textarea label="Address" name="address" value={form.address} onChange={update} required minLength={5} className="md:col-span-2" />
-              <Input label="City" name="city" value={form.city} onChange={update} required />
-              <Input label="State" name="state" value={form.state} onChange={update} required />
-              <Input label="Pincode" name="pincode" value={form.pincode} onChange={update} required />
+              <Input label="Experience (years)" name="experienceYears" type="number" min="0" max="50" value={form.experienceYears} onChange={update} required />
+              <Input label="Current profession" name="currentProfession" value={form.currentProfession} onChange={update} required minLength={2} maxLength={100} />
+              <Select label="Work preference" name="workPreference" value={form.workPreference} onChange={update} required>
+                <option value="">Select preference</option>
+                <option value="part-time">Part-time</option>
+                <option value="full-time">Full-time</option>
+              </Select>
+              <Select label="Have worked in salon before?" name="workedInSalonBefore" value={form.workedInSalonBefore} onChange={update} required>
+                <option value="">Select answer</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </Select>
+              {form.workedInSalonBefore === 'yes' ? (
+                <Input label="Previous salon name" name="previousSalonName" value={form.previousSalonName} onChange={update} required maxLength={200} />
+              ) : null}
+              <Select label="Own tools & products?" name="ownToolsProducts" value={form.ownToolsProducts} onChange={update} required>
+                <option value="">Select answer</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </Select>
+              <Input label="Preferred area / location to work" name="preferredWorkAreas" value={form.preferredWorkAreas} onChange={update} required minLength={2} maxLength={300} className="md:col-span-2" />
+              <div className="md:col-span-2">
+                <p className="mb-2 block text-sm font-semibold text-[#4a3444]">Services offered</p>
+                <div className="grid gap-3 rounded-3xl bg-white/70 p-4 md:grid-cols-2">
+                  {serviceOptions.map((service) => (
+                    <label className="flex items-center gap-3 text-sm font-semibold text-[#4a3444]" key={service}>
+                      <input
+                        name="specializations"
+                        type="checkbox"
+                        value={service}
+                        checked={form.specializations.includes(service)}
+                        onChange={update}
+                        required={!form.specializations.length}
+                      />
+                      {service}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              {form.specializations.includes('Others') ? (
+                <Input label="Other service" name="otherService" value={form.otherService} onChange={update} required maxLength={100} className="md:col-span-2" />
+              ) : null}
             </div>
           ) : null}
           {step === 2 ? (
             <div className="grid gap-5">
-              <FileUpload label="Profile photo" name="profilePhoto" accept="image/*" helper="Required" onChange={updateFiles} required />
-              <FileUpload label="Government ID" name="governmentId" accept="image/*,.pdf" helper="Required" onChange={updateFiles} required />
-              <FileUpload label="Certificates" name="certificates" accept="image/*,.pdf" helper="Upload up to 10 files" onChange={updateFiles} multiple />
-              <FileUpload label="Portfolio images" name="portfolioImages" accept="image/*" helper="Upload up to 10 images" onChange={updateFiles} multiple />
+              <FileUpload label="Passport size photo" name="profilePhoto" accept="image/*" helper="Required" onChange={updateFiles} required />
+              <FileUpload label="Aadhaar card" name="governmentId" accept="image/*,.pdf" helper="Required" onChange={updateFiles} required />
+              <FileUpload label="Address proof" name="addressProof" accept="image/*,.pdf" helper="Required" onChange={updateFiles} required />
+              <FileUpload label="Experience certificate" name="experienceCertificate" accept="image/*,.pdf" helper="Optional" onChange={updateFiles} />
+              <FileUpload label="Training certificate" name="trainingCertificate" accept="image/*,.pdf" helper="Optional" onChange={updateFiles} />
+            </div>
+          ) : null}
+          {step === 3 ? (
+            <div className="grid gap-5">
+              <label className="flex items-start gap-3 rounded-3xl bg-[#fff8f8] p-4 text-sm font-semibold text-[#4a3444]">
+                <input className="mt-1" name="declarationAccepted" type="checkbox" checked={form.declarationAccepted} onChange={update} required />
+                <span>I hereby declare that the above information is true to the best of my knowledge and I agree to follow the standards and policies of Cosmo Home.</span>
+              </label>
             </div>
           ) : null}
           {status.error ? <p className="mt-4 text-sm font-semibold text-[#b4234d]">{status.error}</p> : null}
           <div className="mt-8 flex flex-wrap justify-between gap-3">
             <Button variant="secondary" onClick={() => setStep((current) => Math.max(0, current - 1))} disabled={step === 0 || status.loading}>Back</Button>
-            {step < 2 ? (
-              <Button onClick={() => setStep((current) => Math.min(2, current + 1))}>Continue</Button>
+            {step < 3 ? (
+              <Button onClick={() => setStep((current) => Math.min(3, current + 1))}>Continue</Button>
             ) : (
               <Button type="submit" disabled={status.loading}>{status.loading ? 'Submitting...' : 'Submit Application'}</Button>
             )}

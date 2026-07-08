@@ -14,5 +14,6 @@ export const ADMIN_ROUTES = {
   GALLERY: '/admin/gallery',
   REVIEWS: '/admin/reviews',
   BEAUTICIANS: '/admin/beauticians',
+  CONTACT_MESSAGES: '/admin/contact-messages',
   SETTINGS: '/admin/settings',
 };

@@ -7,11 +7,15 @@ import ServiceCard from '../../components/public/ServiceCard.jsx';
 import GalleryGrid from '../../components/public/GalleryGrid.jsx';
 import ReviewCard from '../../components/public/ReviewCard.jsx';
 import WhatsAppButton from '../../components/public/WhatsAppButton.jsx';
+import Button from '../../components/common/Button.jsx';
+import FileUpload from '../../components/common/FileUpload.jsx';
+import Input from '../../components/common/Input.jsx';
 import Loader from '../../components/common/Loader.jsx';
+import Textarea from '../../components/common/Textarea.jsx';
 import { organizationStructuredData } from '../../SEO/structuredData.js';
 import { getServices } from '../../services/services.api.js';
 import { getGallery } from '../../services/gallery.api.js';
-import { getReviews } from '../../services/reviews.api.js';
+import { createReview, getReviews } from '../../services/reviews.api.js';
 import { unwrapApiList } from '../../utils/apiData.js';
 import { formatCurrency } from '../../utils/formatCurrency.js';
 
@@ -23,8 +27,13 @@ const SectionTitle = ({ eyebrow, title, text }) => (
   </div>
 );
 
+const initialReviewForm = { customerName: '', rating: '5', comment: '' };
+
 export default function HomePage() {
   const [data, setData] = useState({ services: [], gallery: [], reviews: [], loading: true });
+  const [reviewForm, setReviewForm] = useState(initialReviewForm);
+  const [reviewImage, setReviewImage] = useState(null);
+  const [reviewStatus, setReviewStatus] = useState({ loading: false, error: '', success: '' });
 
   useEffect(() => {
     let active = true;
@@ -47,6 +56,26 @@ export default function HomePage() {
   }, []);
 
   const startingPrice = data.services.length ? Math.min(...data.services.map((service) => service.discountPrice ?? service.price ?? 0)) : 0;
+
+  const updateReviewForm = (event) => setReviewForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+
+  const submitReview = async (event) => {
+    event.preventDefault();
+    setReviewStatus({ loading: true, error: '', success: '' });
+    const payload = new FormData();
+    Object.entries(reviewForm).forEach(([key, value]) => payload.append(key, value));
+    if (reviewImage) payload.append('image', reviewImage);
+
+    try {
+      await createReview(payload);
+      setReviewForm(initialReviewForm);
+      setReviewImage(null);
+      event.target.reset();
+      setReviewStatus({ loading: false, error: '', success: 'Thank you. Your review is pending approval.' });
+    } catch (error) {
+      setReviewStatus({ loading: false, error: error?.response?.data?.message || 'Unable to submit your review right now.', success: '' });
+    }
+  };
 
   return (
     <>
@@ -126,6 +155,29 @@ export default function HomePage() {
           </div>
         </section>
       ) : null}
+
+      <section className="section-shell py-16">
+        <div className="glass-panel grid gap-8 rounded-[2rem] p-6 md:p-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-[#b76d86]">Share Your Experience</p>
+            <h2 className="mt-3 text-3xl font-black text-[#352633] md:text-5xl">Leave a Cosmo Home review.</h2>
+            <p className="mt-4 leading-7 text-[#6f5364]">Your feedback helps our team improve. Reviews appear publicly after admin approval.</p>
+          </div>
+          <form onSubmit={submitReview}>
+            <div className="grid gap-5 md:grid-cols-2">
+              <Input label="Name" name="customerName" value={reviewForm.customerName} onChange={updateReviewForm} required minLength={2} />
+              <Input label="Rating" name="rating" type="number" min="1" max="5" value={reviewForm.rating} onChange={updateReviewForm} required />
+              <Textarea label="Review" name="comment" value={reviewForm.comment} onChange={updateReviewForm} required minLength={10} className="md:col-span-2" />
+              <FileUpload label="Photo" accept="image/*" helper="Optional" onChange={(event) => setReviewImage(event.target.files?.[0])} className="md:col-span-2" />
+            </div>
+            {reviewStatus.error ? <p className="mt-4 text-sm font-semibold text-[#b4234d]">{reviewStatus.error}</p> : null}
+            {reviewStatus.success ? <p className="mt-4 text-sm font-semibold text-[#237b4b]">{reviewStatus.success}</p> : null}
+            <Button className="mt-6 w-full md:w-auto" type="submit" disabled={reviewStatus.loading}>
+              {reviewStatus.loading ? 'Submitting...' : 'Submit Review'}
+            </Button>
+          </form>
+        </div>
+      </section>
 
       {data.gallery.length ? (
         <section className="section-shell py-16">

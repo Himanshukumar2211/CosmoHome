@@ -5,6 +5,7 @@ import AuthLayout from '../layouts/AuthLayout.jsx';
 import { RedirectAuthenticatedAdmin, RequireAdmin } from './routeGuards.jsx';
 
 const AdminBeauticiansPage = lazy(() => import('../pages/admin/AdminBeauticiansPage.jsx'));
+const AdminContactMessagesPage = lazy(() => import('../pages/admin/AdminContactMessagesPage.jsx'));
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage.jsx'));
 const AdminGalleryPage = lazy(() => import('../pages/admin/AdminGalleryPage.jsx'));
 const AdminLoginPage = lazy(() => import('../pages/admin/AdminLoginPage.jsx'));
@@ -26,6 +27,7 @@ export const adminRoutes = (
         <Route path="admin/gallery" element={<AdminGalleryPage />} />
         <Route path="admin/reviews" element={<AdminReviewsPage />} />
         <Route path="admin/beauticians" element={<AdminBeauticiansPage />} />
+        <Route path="admin/contact-messages" element={<AdminContactMessagesPage />} />
         <Route path="admin/settings" element={<AdminSettingsPage />} />
       </Route>
     </Route>

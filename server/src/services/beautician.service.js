@@ -26,6 +26,7 @@ const asArray = (value) => {
 const buildAssetList = (beautician) => [
   beautician.profilePhoto,
   beautician.governmentId,
+  beautician.addressProof,
   ...(beautician.portfolioImages || []),
   ...(beautician.certificates || []),
 ];
@@ -33,13 +34,15 @@ const buildAssetList = (beautician) => [
 export const registerBeauticianService = async ({ body, files }) => {
   const profilePhotoFile = files?.profilePhoto?.[0];
   const governmentIdFile = files?.governmentId?.[0];
+  const addressProofFile = files?.addressProof?.[0];
 
-  if (!profilePhotoFile || !governmentIdFile) {
-    throw new ApiError(400, 'Profile photo and government ID are required');
+  if (!profilePhotoFile || !governmentIdFile || !addressProofFile) {
+    throw new ApiError(400, 'Passport size photo, Aadhaar card, and address proof are required');
   }
 
   const profilePhoto = await uploadFileService(profilePhotoFile, CLOUDINARY_FOLDERS.BEAUTICIAN_PROFILE);
   const governmentId = await uploadFileService(governmentIdFile, CLOUDINARY_FOLDERS.BEAUTICIAN_GOVERNMENT_IDS);
+  const addressProof = await uploadFileService(addressProofFile, CLOUDINARY_FOLDERS.BEAUTICIAN_ADDRESS_PROOFS);
   const portfolioImages = await uploadFilesService(
     files?.portfolioImages || [],
     CLOUDINARY_FOLDERS.BEAUTICIAN_PORTFOLIO,
@@ -55,11 +58,12 @@ export const registerBeauticianService = async ({ body, files }) => {
       specializations: asArray(body.specializations),
       profilePhoto,
       governmentId,
+      addressProof,
       portfolioImages,
       certificates,
     });
   } catch (error) {
-    await deleteFilesService([profilePhoto, governmentId, ...portfolioImages, ...certificates]);
+    await deleteFilesService([profilePhoto, governmentId, addressProof, ...portfolioImages, ...certificates]);
     throw error;
   }
 };
@@ -122,12 +126,14 @@ export const updateBeauticianService = async ({ id, body, files, adminId }) => {
 
   const oldProfilePhoto = beautician.profilePhoto;
   const oldGovernmentId = beautician.governmentId;
+  const oldAddressProof = beautician.addressProof;
   const oldPortfolioImages = beautician.portfolioImages || [];
   const oldCertificates = beautician.certificates || [];
   const uploadedAssets = [];
 
   const profilePhoto = await uploadFileService(files?.profilePhoto?.[0], CLOUDINARY_FOLDERS.BEAUTICIAN_PROFILE);
   const governmentId = await uploadFileService(files?.governmentId?.[0], CLOUDINARY_FOLDERS.BEAUTICIAN_GOVERNMENT_IDS);
+  const addressProof = await uploadFileService(files?.addressProof?.[0], CLOUDINARY_FOLDERS.BEAUTICIAN_ADDRESS_PROOFS);
   const portfolioImages = await uploadFilesService(
     files?.portfolioImages || [],
     CLOUDINARY_FOLDERS.BEAUTICIAN_PORTFOLIO,
@@ -137,7 +143,7 @@ export const updateBeauticianService = async ({ id, body, files, adminId }) => {
     CLOUDINARY_FOLDERS.BEAUTICIAN_CERTIFICATES,
   );
 
-  uploadedAssets.push(profilePhoto, governmentId, ...portfolioImages, ...certificates);
+  uploadedAssets.push(profilePhoto, governmentId, addressProof, ...portfolioImages, ...certificates);
 
   try {
     Object.assign(beautician, {
@@ -151,6 +157,10 @@ export const updateBeauticianService = async ({ id, body, files, adminId }) => {
 
     if (governmentId) {
       beautician.governmentId = governmentId;
+    }
+
+    if (addressProof) {
+      beautician.addressProof = addressProof;
     }
 
     if (portfolioImages.length) {
@@ -184,6 +194,7 @@ export const updateBeauticianService = async ({ id, body, files, adminId }) => {
     await deleteFilesService([
       profilePhoto ? oldProfilePhoto : null,
       governmentId ? oldGovernmentId : null,
+      addressProof ? oldAddressProof : null,
       ...(portfolioImages.length ? oldPortfolioImages : []),
       ...(certificates.length ? oldCertificates : []),
     ]);

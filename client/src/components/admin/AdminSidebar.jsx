@@ -8,6 +8,7 @@ const links = [
   [ADMIN_ROUTES.SERVICES, 'Services'],
   [ADMIN_ROUTES.GALLERY, 'Gallery'],
   [ADMIN_ROUTES.REVIEWS, 'Reviews'],
+  [ADMIN_ROUTES.CONTACT_MESSAGES, 'Contact Messages'],
   [ADMIN_ROUTES.SETTINGS, 'Settings'],
 ];
 

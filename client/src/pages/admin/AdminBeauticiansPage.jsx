@@ -134,12 +134,25 @@ export default function AdminBeauticiansPage() {
             <h2 id="beautician-profile-title" className="text-2xl font-black">{selected.fullName}</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {[
-                ['Phone', selected.phone],
-                ['Email', selected.email || 'Not provided'],
+                ['Father / Husband', selected.fathersHusbandName || 'Not provided'],
+                ['Date of birth', formatDate(selected.dateOfBirth) || 'Not provided'],
                 ['Gender', selected.gender || 'Not provided'],
+                ['Mobile', selected.phone],
+                ['Alternate mobile', selected.alternatePhone || 'Not provided'],
+                ['Email', selected.email || 'Not provided'],
+                ['Aadhaar number', selected.aadhaarNumber || 'Not provided'],
+                ['PAN number', selected.panNumber || 'Not provided'],
                 ['Experience', `${selected.experienceYears || 0} years`],
-                ['Specializations', selected.specializations?.join(', ')],
+                ['Current profession', selected.currentProfession || 'Not provided'],
+                ['Work preference', selected.workPreference || 'Not provided'],
+                ['Services offered', selected.specializations?.join(', ')],
+                ['Other service', selected.otherService || 'Not provided'],
+                ['Worked in salon before', selected.workedInSalonBefore || 'Not provided'],
+                ['Previous salon name', selected.previousSalonName || 'Not provided'],
+                ['Own tools & products', selected.ownToolsProducts || 'Not provided'],
+                ['Preferred area', selected.preferredWorkAreas || 'Not provided'],
                 ['Location', `${selected.address}, ${selected.city}, ${selected.state} ${selected.pincode}`],
+                ['Declaration', selected.declarationAccepted ? 'Accepted' : 'Not accepted'],
               ].map(([label, value]) => (
                 <div className="rounded-2xl bg-[#fff8f8] p-4" key={label}>
                   <p className="text-xs font-black uppercase tracking-wide text-[#b76d86]">{label}</p>
@@ -148,10 +161,10 @@ export default function AdminBeauticiansPage() {
               ))}
             </div>
             <div className="mt-6 grid gap-3 md:grid-cols-2">
-              <ImageManager asset={selected.profilePhoto} label="Profile Photo" />
-              <ImageManager asset={selected.governmentId} label="Government ID" />
+              <ImageManager asset={selected.profilePhoto} label="Passport Size Photo" />
+              <ImageManager asset={selected.governmentId} label="Aadhaar Card" />
+              <ImageManager asset={selected.addressProof} label="Address Proof" />
               {selected.certificates?.map((asset, index) => <ImageManager asset={asset} label={`Certificate ${index + 1}`} key={asset.url || index} />)}
-              {selected.portfolioImages?.map((asset, index) => <ImageManager asset={asset} label={`Portfolio ${index + 1}`} key={asset.url || index} />)}
             </div>
           </div>
         ) : null}
