@@ -18,6 +18,7 @@ import { getGallery } from '../../services/gallery.api.js';
 import { createReview, getReviews } from '../../services/reviews.api.js';
 import { unwrapApiData, unwrapApiList } from '../../utils/apiData.js';
 import { formatCurrency } from '../../utils/formatCurrency.js';
+import Hero from '../../assets/branding/Hero.jpeg';
 
 const SectionTitle = ({ eyebrow, title, text }) => (
   <div className="mx-auto max-w-2xl text-center">
@@ -102,7 +103,7 @@ export default function HomePage() {
             Premium beauty care at home
           </p>
           <h1 className="mt-6 text-5xl font-black leading-tight text-[#352633] md:text-7xl">
-            Salon polish without leaving your home.
+            Salon Service at your home.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-8 text-[#6f5364]">
             Cosmo Home brings trained beauticians, curated products, and calm appointment experiences to your doorstep.
@@ -130,7 +131,7 @@ export default function HomePage() {
           <div className="aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-[#f8dfe5]">
             <img
               className="h-full w-full object-cover"
-              src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80"
+              src={Hero}
               alt="Premium salon service"
             />
           </div>
