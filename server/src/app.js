@@ -14,14 +14,13 @@ import routes from './routes/index.routes.js';
 
 const app = express();
 
+if (env.nodeEnv === 'production') {
+  app.set('trust proxy', 1);
+}
+
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(requestLogger);
-app.use(apiRateLimiter);
-app.use(express.json({ limit: '1mb' }));
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-app.use(cookieParser(env.cookieSecret));
-app.use(sanitizeRequest);
 
 app.get('/health', (_req, res) => {
   const database = getDatabaseStatus();
@@ -33,6 +32,12 @@ app.get('/health', (_req, res) => {
     database,
   });
 });
+
+app.use(apiRateLimiter);
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(cookieParser(env.cookieSecret));
+app.use(sanitizeRequest);
 
 app.use('/api', routes);
 app.use(notFoundMiddleware);
