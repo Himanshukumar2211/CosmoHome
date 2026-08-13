@@ -148,6 +148,12 @@ export default function HomePage() {
         ) : null}
       </section>
 
+      <div className="flex justify-center pb-16">
+        <Link className="inline-flex min-h-11 items-center rounded-full bg-[#7d3c58] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#7d3c58]/20" to="/services">
+          Explore All Services
+        </Link>
+      </div>
+
       <section className="bg-white/60 py-16">
         <div className="section-shell grid gap-8 lg:grid-cols-4">
           {['Verified professionals', 'Doorstep convenience', 'Transparent pricing', 'Hygienic kits'].map((item) => (
