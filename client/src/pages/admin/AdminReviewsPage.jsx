@@ -121,6 +121,7 @@ export default function AdminReviewsPage() {
             columns={[
               { key: 'image', header: 'Image', render: (row) => <ImageManager asset={row.image} label={row.customerName} /> },
               { key: 'customerName', header: 'Customer' },
+              { key: 'comment', header: 'Comment', render: (row) => ( <div className="max-w-md whitespace-normal"> {row.comment || '-'} </div> ), },
               { key: 'rating', header: 'Rating', render: (row) => `${row.rating}/5` },
               { key: 'serviceName', header: 'Service', render: (row) => row.serviceName || '-' },
               { key: 'isApproved', header: 'Approval', render: (row) => <StatusBadge status={row.isApproved ? 'approved' : 'pending'} /> },
